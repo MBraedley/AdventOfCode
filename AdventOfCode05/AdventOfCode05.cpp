@@ -31,6 +31,17 @@ bool findAndRemove(string& poly, int recursionCount = 0)
 	return false;
 }
 
+string removeProblems(const string& poly, char c)
+{
+	string newPoly;
+	for (char s : poly)
+	{
+		if (s != c && s != c + upperLowerDiff)
+			newPoly.push_back(s);
+	}
+	return newPoly;
+}
+
 int main()
 {
 	string filename = "C:\\Dev\\AdventOfCode\\AdventOfCode05\\input.txt";
@@ -39,12 +50,17 @@ int main()
 	string line;
 	getline(fin, line);
 
-//	list<char> poly;
-//	poly.assign(line.begin(), line.end());
-	while (findAndRemove(line))
+	while (findAndRemove(line));
+
+	int bestPoly = line.size();
+	for (char c = 'A'; c <= 'Z'; c++)
 	{
-//		cout << poly.size() << endl;
+		string newLine = removeProblems(line, c);
+		while (findAndRemove(newLine));
+
+		if (newLine.size() < bestPoly)
+			bestPoly = newLine.size();
 	}
 	
-	cout << line << endl << line.size();
+	cout << bestPoly << endl;
 }
