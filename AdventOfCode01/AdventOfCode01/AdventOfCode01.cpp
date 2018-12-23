@@ -10,7 +10,7 @@ using namespace std;
 
 int main()
 {
-	string filename = "C:\\Dev\\AdventOfCode\\AdventOfCode1-1\\input1-1.txt";
+	string filename = "C:\\Dev\\AdventOfCode\\AdventOfCode01\\input1-1.txt";
 	fstream fin(filename);
 
 	int frequencey = 0;

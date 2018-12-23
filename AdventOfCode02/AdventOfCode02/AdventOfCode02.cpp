@@ -32,7 +32,7 @@ bool oneCharOff(string a, string b, int& diffPos)
 
 int main()
 {
-	string filename = "C:\\Dev\\AdventOfCode\\AdventOfCode2\\input2.txt";
+	string filename = "C:\\Dev\\AdventOfCode\\AdventOfCode02\\input2.txt";
 	//int twosCount = 0;
 	//int threesCount = 0;
 
