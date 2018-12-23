@@ -78,19 +78,23 @@ int main()
 
 	int longestSleepingGuard = 0;
 	int timeAsleep = 0;
+	int biggestMinute = -1;
+	int mostestMinute = -1;
 
 	for (auto guardTimes : asleepTimes)
 	{
-		if (guardTimes.second.second > timeAsleep)
+		for (int m = 0; m < guardTimes.second.first.size(); m++)
 		{
-			longestSleepingGuard = guardTimes.first;
-			timeAsleep = guardTimes.second.second;
+			if (guardTimes.second.first[m] > biggestMinute)
+			{
+				biggestMinute = guardTimes.second.first[m];
+				mostestMinute = m;
+				longestSleepingGuard = guardTimes.first;
+			}
 		}
 	}
 
-	auto sleeper = asleepTimes.find(longestSleepingGuard);
-	int biggestMinute = -1;
-	int mostestMinute = -1;
+/*	auto sleeper = asleepTimes.find(longestSleepingGuard);
 	for (int m = 0; m < sleeper->second.first.size(); m++)
 	{
 		if (sleeper->second.first[m] > biggestMinute)
@@ -98,7 +102,7 @@ int main()
 			biggestMinute = sleeper->second.first[m];
 			mostestMinute = m;
 		}
-	}
+	}*/
 
 	cout << longestSleepingGuard << " * " << mostestMinute << " = " << longestSleepingGuard * mostestMinute << endl;
 }
