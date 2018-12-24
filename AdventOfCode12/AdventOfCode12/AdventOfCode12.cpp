@@ -11,17 +11,6 @@
 
 using namespace std;
 
-void printPlants(const deque<pair<long long, bool>>& plants, int generation, int padding = 0)
-{
-	cout << generation << ":\t";
-	for (int i = 0; i < padding; i++)
-		cout << " ";
-	for (auto plant : plants)
-		cout << (plant.second ? "#" : ".");
-
-	cout << endl;
-}
-
 int main()
 {
 	string filename = "C:\\Dev\\AdventOfCode\\AdventOfCode12\\input.txt";
@@ -30,70 +19,64 @@ int main()
 	string initialConditions;
 	getline(fin, initialConditions);
 	initialConditions = initialConditions.substr(15);
-	deque<pair<long long, bool>> plants;
+	string plants = initialConditions;
 
-	int potNumber = 0;
-	for (char c : initialConditions)
-		plants.push_back(make_pair(potNumber++, c == '#'));
-
-	map<vector<bool>, bool> rules;
+	map<string, char> rules;
 
 	string ruleLine;
 	getline(fin, ruleLine);	//get the empty line
 
 	while (getline(fin, ruleLine))
 	{
-		vector<bool> conditions(5);
-		for (int i = 0; i < 5; i++)
-			conditions[i] = ruleLine[i] == '#';
+		string conditions = ruleLine.substr(0, 5);
 
-		bool result = ruleLine.back() == '#';
-		rules.insert(make_pair(conditions, result));
+		rules.insert(make_pair(conditions, ruleLine.back()));
 	}
 
-//	printPlants(plants, 0, 40);
+	long long zeroIndex = 0;
 
-	long long numGens = 50000000000;
+	cout << "0:\t?\t" << zeroIndex << "\t" << plants << endl;
+	long long numGens = 1000;
 	for (long long gen = 0; gen < numGens; gen++)
 	{
-		if ((gen * 100) % numGens == 0)
-			cout << (gen * 100) / numGens << "%\r";
-		// Push 4 new pots on each end of the deque, but 2 from each end won't be used in the next generation
-		plants.push_front(make_pair(plants.front().first - 1, false));
-		plants.push_front(make_pair(plants.front().first - 1, false));
-		plants.push_front(make_pair(plants.front().first - 1, false));
-		plants.push_front(make_pair(plants.front().first - 1, false));
-		plants.push_back(make_pair(plants.back().first + 1, false));
-		plants.push_back(make_pair(plants.back().first + 1, false));
-		plants.push_back(make_pair(plants.back().first + 1, false));
-		plants.push_back(make_pair(plants.back().first + 1, false));
+		zeroIndex++;
+//		if ((gen * 100) % numGens == 0)
+//			cout << (gen * 100) / numGens << "%\r";
+		int firstPlant = plants.find_first_of('#');
+		zeroIndex -= firstPlant;
+		int lastPlant = plants.find_last_of('#');
 
-		deque<pair<long long, bool>> nextGen;
-		for (int i = 2; i < plants.size() - 2; i++)
+		plants = "..." + plants.substr(firstPlant, lastPlant - firstPlant + 2) + "...";
+		
+		string nextGen;
+		for (int i = 0; i < plants.size() - 4; i++)
 		{
-			vector<bool> lookingAt(5);
-			lookingAt[0] = plants[i - 2].second;
-			lookingAt[1] = plants[i - 1].second;
-			lookingAt[2] = plants[i].second;
-			lookingAt[3] = plants[i + 1].second;
-			lookingAt[4] = plants[i + 2].second;
-			auto rule = rules.find(lookingAt);
+			auto rule = rules.find(plants.substr(i, 5));
 			if (rule == rules.end())
 			{
-				cout << "Something went wrong";
+				cout << "Something went wrong" << endl;
 				return -1;
 			}
-			nextGen.push_back(make_pair(plants[i].first, rule->second));
+			nextGen.push_back(rule->second);
 		}
 
 		plants = nextGen;
-//		printPlants(plants, gen + 1, 38 - gen * 2);
+
+		long long count = 0;
+		for (long long i = 0; i < plants.size(); i++)
+			if (plants[i] == '#')
+				count += i - zeroIndex;
+		cout << gen + 1 << ":\t" << count << "\t" << zeroIndex << "\t" << plants << endl;
 	}
 
+	string steadyState = "..##.#....##.#....##.#....##.#....##.#....##.#.....##.#........##.#....##.#.....###.#....###.#....###.#....###.#....##.#....##.#....##.#....##.#....###.#....##.#....##.#.";
+	numGens = 50000000000;
+	zeroIndex = numGens * -1 + 72;
+
 	long long count = 0;
-	for (auto plant : plants)
-		if (plant.second)
-			count += plant.first;
+	for (long long i = 0; i < steadyState.size(); i++)
+		if (steadyState[i] == '#')
+			count += i - zeroIndex;
 
 	cout << count << endl;
 }
