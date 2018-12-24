@@ -48,38 +48,31 @@ int main()
 	int width = right - left + 1;
 	int height = bottom - top + 1;
 
-	vector<int> col(height, -1);
+	vector<int> col(height, 0);
 	vector<vector<int>> grid(width, col);
+
+	int areaSize = 0;
 
 	// Fill the grid
 	for (int i = 0; i < width; i++)
 	{
 		for (int j = 0; j < height; j++)
 		{
-			int clossestID = -1;
-			int shortestDistance = INT32_MAX;
-
 			for (int id = 0; id < coords.size(); id++)
 			{
 				x = coords[id].first - left;
 				y = coords[id].second - top;
 
-				int distance = abs(x - i) + abs(y - j);
-				if (distance < shortestDistance)
-				{
-					shortestDistance = distance;
-					clossestID = id;
-				}
-				else if (distance == shortestDistance)
-					clossestID = -1;
+				grid[i][j] += abs(x - i) + abs(y - j);
 			}
 
-			if (i == 0 || j == 0 || i == width - 1 || j == height - 1)
-				infiniteIds.insert(clossestID);
-
-			grid[i][j] = clossestID;
+			if (grid[i][j] < 10000)
+				areaSize++;
 		}
 	}
+
+	cout << areaSize << endl;
+	return 0;
 
 	vector<int> sizes(coords.size(), 0);
 	int biggestArea = 0;
