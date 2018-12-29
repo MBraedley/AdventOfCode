@@ -10,6 +10,8 @@
 #include <stack>
 #include <cassert>
 #include <map>
+#include <unordered_map>
+#include <complex>
 
 using namespace std;
 
@@ -116,8 +118,81 @@ void Method1(std::string &filename)
 	cout << GetLength(head) << endl;
 }
 
+map<char, complex<int>> dir;
+
+bool traverse(ifstream& fin, unordered_map<string, int>& theMap, complex<int>& pos, int& depth)
+{
+	complex<int> initialPos = pos;
+	int initialDepth = depth;
+	char c;
+	while (fin >> c)
+	{
+		auto it = dir.find(c);
+		if (it != dir.end())
+		{
+			pos += it->second;
+			stringstream sstrm;
+			sstrm << pos;
+			auto mapIt = theMap.find(sstrm.str());
+			if (mapIt == theMap.end())
+			{
+				depth++;
+				theMap.insert(make_pair(sstrm.str(), depth));
+			}
+			else
+				depth = mapIt->second;
+		}
+		else if (c == '|')
+		{
+			pos = initialPos;
+			depth = initialDepth;
+		}
+		else if (c == '(')
+		{
+			if (traverse(fin, theMap, pos, depth))
+				cout << "Reached the end prematurely." << endl;
+		}
+		else if (c == ')')
+		{
+			return false;
+		}
+		else if (c == '$')
+		{
+			cout << "Reached the end" << endl;
+			return true;
+		}
+		else
+		{
+			cout << "Something went wrong: " << c << endl;
+		}
+	}
+}
+
 int main()
 {
-	string filename = "C:\\Dev\\AdventOfCode\\AdventOfCode20\\test5.txt";
-	Method1(filename);
+	string filename = "C:\\Dev\\AdventOfCode\\AdventOfCode20\\input.txt";
+//	Method1(filename);
+
+	ifstream fin(filename);
+
+	dir.insert(make_pair('N', 1i));
+	dir.insert(make_pair('S', -1i));
+	dir.insert(make_pair('E', 1));
+	dir.insert(make_pair('W', -1));
+
+	unordered_map<string, int> theMap;
+	complex<int> pos(0, 0);
+	int depth = 0;
+
+	if (!traverse(fin, theMap, pos, depth))
+		cout << "Bad traversal" << endl;
+
+	int maxDepth = depth;
+	for (auto it : theMap)
+	{
+		if (it.second > maxDepth)
+			maxDepth = it.second;
+	}
+
+	cout << depth << " " << maxDepth << endl;
 }
