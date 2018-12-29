@@ -34,7 +34,7 @@ int main()
 
 	Interpreter interp(ip, false);
 	vector<int> reg = { 0, 0, 0, 0, 0, 0 };
-	reg[0] = INT32_MAX;
+	reg[0] = 0;
 	interp.SetRegisters(reg);
 //	interp.SetMaxRepeat(fewest * 2);
 

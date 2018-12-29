@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <unordered_set>
 
 Interpreter::Interpreter(int ip, bool printRegisters /*= false*/) :
 	m_ip(ip), m_registers(6, 0), m_instructionCount(0), m_printRegisters(printRegisters), m_maxInstructionsToRun(-1), m_maxInstructionRepeat(-1), m_wasHalted(false)
@@ -24,16 +25,27 @@ bool Interpreter::SetRegisters(std::vector<int> values)
 
 void Interpreter::RunProgram(std::vector<std::string> program)
 {
-	std::stringstream sstrm;
-	sstrm << m_registers[0] << "_output.txt";
-	std::ofstream fout(sstrm.str());
+	std::unordered_set<int> goodVals;
+	int last;
 	PreProcess(program);
 	while (m_registers[m_ip] < m_processedProgram.size() )
 	{
 		if (m_instructionCount < m_maxInstructionsToRun && m_repeatCount[m_registers[m_ip]] < m_maxInstructionRepeat)
 		{
-			if (m_registers[m_ip] == 28 && m_registers[4] < 5502418)
-				std::cout << m_registers[4] << " " << m_instructionCount << std::endl;
+			if (m_registers[m_ip] == 28)
+			{
+				if (goodVals.find(m_registers[4]) == goodVals.end())
+				{
+					last = m_registers[4];
+					goodVals.insert(last);
+				}
+				else
+				{
+					std::cout << last << std::endl;
+					m_wasHalted = true;
+					return;
+				}
+			}
 			m_repeatCount[m_registers[m_ip]]++;
 			RunOperation(m_processedProgram[m_registers[m_ip]]);
 			m_registers[m_ip]++;
