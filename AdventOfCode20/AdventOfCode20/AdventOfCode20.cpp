@@ -188,11 +188,14 @@ int main()
 		cout << "Bad traversal" << endl;
 
 	int maxDepth = depth;
+	int longPaths = 0;
 	for (auto it : theMap)
 	{
 		if (it.second > maxDepth)
 			maxDepth = it.second;
+		if (it.second >= 1000)
+			longPaths++;
 	}
 
-	cout << depth << " " << maxDepth << endl;
+	cout << depth << " " << maxDepth << " " << longPaths << endl;
 }
